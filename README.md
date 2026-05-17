@@ -77,6 +77,17 @@ POST /predict/text -> TF-IDF word/char признаки -> Logistic Regression -
 
 `openai/whisper-small` выбран как multilingual ASR с поддержкой русского языка. Для коротких пользовательских запросов это разумный баланс качества и скорости на GPU уровня RTX 3090. Качество ASR оценивается через `WER` и `CER`; влияние ASR на бизнес-задачу оценивается сравнением intent-метрик на оригинальных транскрипциях и ASR-транскрипциях.
 
+## Метрики классификации
+
+Метрики получены на holdout-разбиении `train_test_split(..., stratify=...)` из `notebooks/notebook.ipynb`.
+
+| Setting | Accuracy | Precision weighted | Recall weighted | F1 weighted | F1 macro |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Original transcription, TF-IDF + Logistic Regression | 0.944 | 0.952 | 0.944 | 0.942 | 0.940 |
+| ASR transcription, Whisper + TF-IDF + Logistic Regression | 0.954 | 0.958 | 0.954 | 0.951 | 0.951 |
+
+Итоговый вариант проходит заданные пороги применимости: `recall_weighted >= 0.70`, `precision_weighted >= 0.75`, `f1_weighted >= 0.80`.
+
 ## Локальный запуск
 
 ```bash
