@@ -26,5 +26,5 @@ class Settings(BaseSettings):
 
     @property
     def intent_model_path(self) -> Path:
-        """Return the full path to the intent classifier artifact."""
+        """Возвращает полный путь к артефакту классификатора интентов."""
         return self.model_dir / self.intent_model_filename

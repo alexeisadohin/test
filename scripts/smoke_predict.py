@@ -3,7 +3,7 @@ from minds14_intent_service.text_model import load_artifact, predict_intent
 
 
 def main() -> None:
-    """Run a single local prediction with the saved model artifact."""
+    """Выполняет один локальный прогноз с сохраненным артефактом модели."""
     settings = Settings()
     model, _ = load_artifact(settings.intent_model_path)
     prediction = predict_intent(model, "я хочу заблокировать карту")

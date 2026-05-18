@@ -9,7 +9,7 @@ from datasets import Dataset, DatasetDict, load_dataset
 
 @dataclass(frozen=True)
 class DatasetColumns:
-    """Store detected dataset column names used by the pipeline."""
+    """Сохраняет имена столбцов обнаруженного набора данных."""
 
     text: str
     label: str
@@ -17,7 +17,7 @@ class DatasetColumns:
 
 
 def first_existing(columns: Iterable[str], candidates: Iterable[str]) -> Optional[str]:
-    """Return the first candidate column that exists in the dataset."""
+    """Возвращает первый существующий в датасете столбец из списка кандидатов."""
     column_set = set(columns)
     for candidate in candidates:
         if candidate in column_set:
@@ -26,7 +26,7 @@ def first_existing(columns: Iterable[str], candidates: Iterable[str]) -> Optiona
 
 
 def load_labeled_split(dataset_name: str, language_config: str) -> Dataset:
-    """Load the primary labeled split for a dataset language config."""
+    """Загружает основной размеченный сплит для языковой конфигурации датасета."""
     raw = load_dataset(dataset_name, language_config)
     if isinstance(raw, DatasetDict):
         if "train" in raw:
@@ -36,7 +36,7 @@ def load_labeled_split(dataset_name: str, language_config: str) -> Dataset:
 
 
 def detect_columns(dataset: Dataset) -> DatasetColumns:
-    """Detect text, label, and optional audio columns in a dataset."""
+    """Определяет в датасете текстовый столбец, метку и необязательный аудиостолбец."""
     columns = dataset.column_names
     text_col = first_existing(columns, ["transcription", "text", "utterance", "sentence", "transcript"])
     label_col = first_existing(columns, ["intent_class", "label", "intent"])
@@ -51,7 +51,7 @@ def detect_columns(dataset: Dataset) -> DatasetColumns:
 
 
 def label_names(dataset: Dataset, label_col: str) -> Optional[Dict[int, str]]:
-    """Return integer-to-name mapping for ClassLabel columns when available."""
+    """Возвращает отображение числовых меток в имена для столбцов ClassLabel."""
     feature = dataset.features[label_col]
     names = getattr(feature, "names", None)
     if names:
@@ -60,7 +60,7 @@ def label_names(dataset: Dataset, label_col: str) -> Optional[Dict[int, str]]:
 
 
 def make_text_frame(dataset: Dataset, columns: DatasetColumns) -> pd.DataFrame:
-    """Build a cleaned text-label DataFrame from a Hugging Face dataset."""
+    """Собирает очищенный DataFrame с текстами и метками из датасета Hugging Face."""
     keep = [columns.text, columns.label]
     df = dataset.select_columns(keep).to_pandas().dropna().reset_index(drop=True)
 

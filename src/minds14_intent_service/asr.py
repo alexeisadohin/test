@@ -11,7 +11,7 @@ from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
 
 
 def resolve_device(device_name: str) -> str:
-    """Resolve user-facing device name to a torch device string."""
+    """Преобразует пользовательское имя устройства в строку устройства torch."""
     if device_name == "auto":
         return "cuda:0" if torch.cuda.is_available() else "cpu"
     if device_name in {"cpu", "-1"}:
@@ -22,7 +22,7 @@ def resolve_device(device_name: str) -> str:
 
 
 def to_mono_float32(audio: np.ndarray) -> np.ndarray:
-    """Convert an audio array to mono float32 samples."""
+    """Преобразует аудиомассив в моно-сэмплы float32."""
     audio_array = np.asarray(audio)
     if audio_array.ndim == 2:
         if audio_array.shape[0] <= audio_array.shape[1]:
@@ -33,7 +33,7 @@ def to_mono_float32(audio: np.ndarray) -> np.ndarray:
 
 
 def resample_audio(audio: np.ndarray, source_rate: int, target_rate: int) -> np.ndarray:
-    """Resample audio to the target sampling rate when needed."""
+    """Передискретизирует аудио к целевой частоте при необходимости."""
     if source_rate == target_rate:
         return audio
 
@@ -51,7 +51,7 @@ class AsrTranscriber:
         language: str = "russian",
         task: str = "transcribe",
     ) -> None:
-        """Load Whisper ASR model and processor once for reuse."""
+        """Один раз загружает модель Whisper ASR и процессор для повторного использования."""
         self.model_name = model_name
         self.device = resolve_device(device_name)
         self.torch_dtype = torch.float16 if self.device.startswith("cuda") else torch.float32
@@ -81,12 +81,12 @@ class AsrTranscriber:
         self.processor = AutoProcessor.from_pretrained(model_name)
 
     def _load_audio(self, path: str) -> Tuple[np.ndarray, int]:
-        """Read an audio file from disk and return mono samples with sample rate."""
+        """Читает аудиофайл с диска и возвращает моно-сэмплы с частотой дискретизации."""
         audio, sampling_rate = sf.read(path)
         return to_mono_float32(audio), int(sampling_rate)
 
     def transcribe_path(self, path: str) -> str:
-        """Transcribe an audio file path into text."""
+        """Расшифровывает аудиофайл по пути в текст."""
         audio, sampling_rate = self._load_audio(path)
         target_sampling_rate = self.processor.feature_extractor.sampling_rate
         audio = resample_audio(audio, sampling_rate, target_sampling_rate)

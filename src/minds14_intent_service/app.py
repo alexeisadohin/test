@@ -34,7 +34,7 @@ state = AppState()
 
 
 def configure_logging(log_file: Path) -> None:
-    """Configure loguru sinks for console and file logging."""
+    """Настраивает вывод loguru в консоль и файл журнала."""
     log_file.parent.mkdir(parents=True, exist_ok=True)
     logger.remove()
     logger.add(sys.stderr, level="INFO")
@@ -43,7 +43,7 @@ def configure_logging(log_file: Path) -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Initialize models once at FastAPI startup and release on shutdown."""
+    """Инициализирует модели при запуске FastAPI и освобождает ресурсы при остановке."""
     settings = Settings()
     configure_logging(settings.log_file)
     logger.info("Starting service")
@@ -86,7 +86,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 def create_app() -> FastAPI:
-    """Create and configure the FastAPI application."""
+    """Создает и настраивает приложение FastAPI."""
     app = FastAPI(
         title="MINDS-14 Intent Service",
         version="0.1.0",
@@ -95,7 +95,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
-        """Return service and model loading status."""
+        """Возвращает статус сервиса и загрузки моделей."""
         return HealthResponse(
             status="ok",
             intent_model_loaded=state.intent_model is not None,
@@ -104,7 +104,7 @@ def create_app() -> FastAPI:
 
     @app.post("/predict/text", response_model=TextPredictionResponse)
     def predict_text(payload: TextRequest) -> TextPredictionResponse:
-        """Predict intent class from a text request."""
+        """Предсказывает класс интента по текстовому запросу."""
         if state.intent_model is None:
             raise HTTPException(status_code=503, detail="Intent model is not loaded.")
         try:
@@ -116,7 +116,7 @@ def create_app() -> FastAPI:
 
     @app.post("/predict/audio", response_model=AudioPredictionResponse)
     async def predict_audio(file: UploadFile = File(...)) -> AudioPredictionResponse:
-        """Transcribe an uploaded audio file and predict its intent class."""
+        """Расшифровывает загруженный аудиофайл и предсказывает его интент."""
         if state.intent_model is None:
             raise HTTPException(status_code=503, detail="Intent model is not loaded.")
         if state.asr is None:

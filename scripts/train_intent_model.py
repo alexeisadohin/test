@@ -7,7 +7,7 @@ from minds14_intent_service.training import train_and_save
 
 
 def main() -> None:
-    """Train and save the baseline intent classifier."""
+    """Обучает и сохраняет базовый классификатор интентов."""
     settings = Settings()
     metadata = train_and_save(
         output_path=settings.intent_model_path,

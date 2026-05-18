@@ -11,7 +11,7 @@ from minds14_intent_service.text_model import build_text_classifier, save_artifa
 
 
 def evaluate_predictions(y_true: List[str], y_pred: List[str]) -> Dict[str, float]:
-    """Compute weighted and macro classification metrics."""
+    """Считает взвешенные и macro-метрики классификации."""
     return {
         "accuracy": accuracy_score(y_true, y_pred),
         "precision_weighted": precision_score(y_true, y_pred, average="weighted", zero_division=0),
@@ -28,7 +28,7 @@ def train_and_save(
     test_size: float,
     random_state: int,
 ) -> Dict[str, Any]:
-    """Train the baseline text classifier and save it as an artifact."""
+    """Обучает базовый текстовый классификатор и сохраняет его как артефакт."""
     dataset = load_labeled_split(dataset_name, language_config)
     columns = detect_columns(dataset)
     df = make_text_frame(dataset, columns)

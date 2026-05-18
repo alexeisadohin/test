@@ -13,14 +13,14 @@ from sklearn.pipeline import FeatureUnion, Pipeline
 
 @dataclass
 class IntentPrediction:
-    """Store a predicted intent label and confidence score."""
+    """Сохраняет предсказанный класс интента и значение уверенности модели."""
 
     label: str
     score: float
 
 
 def build_text_classifier(random_state: int) -> Pipeline:
-    """Create the TF-IDF plus Logistic Regression intent classifier."""
+    """Создает классификатор интентов на TF-IDF и логистической регрессии."""
     features = FeatureUnion(
         transformer_list=[
             (
@@ -62,7 +62,7 @@ def build_text_classifier(random_state: int) -> Pipeline:
 
 
 def predict_intent(model: Pipeline, text: str) -> IntentPrediction:
-    """Predict intent label and score for a single text input."""
+    """Предсказывает метку интента и уверенность для одного текстового входа."""
     clean_text = text.strip()
     if not clean_text:
         raise ValueError("Text must not be empty.")
@@ -73,13 +73,13 @@ def predict_intent(model: Pipeline, text: str) -> IntentPrediction:
 
 
 def save_artifact(path: Path, model: Pipeline, metadata: Dict[str, Any]) -> None:
-    """Persist a trained model and metadata to disk."""
+    """Сохраняет обученную модель и метаданные на диск."""
     path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump({"model": model, "metadata": metadata}, path)
 
 
 def load_artifact(path: Path) -> Tuple[Pipeline, Dict[str, Any]]:
-    """Load a trained model artifact and its metadata."""
+    """Загружает артефакт обученной модели и его метаданные."""
     artifact = joblib.load(path)
     if isinstance(artifact, dict) and "model" in artifact:
         return artifact["model"], artifact.get("metadata", {})
